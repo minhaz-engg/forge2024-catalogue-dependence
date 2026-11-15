@@ -1,8 +1,8 @@
-"""Figures 1-9 (+S1). Run after s01-s08."""
+"""Data figures 3 and 5-11, Fig. S1 and the graphical abstract (Figs 1, 2 and 4 are schematics drawn in Figma). Run after s01-s08."""
 import json, numpy as np, pandas as pd, matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-from matplotlib.patches import Ellipse, FancyBboxPatch
+from matplotlib.patches import Ellipse
 import fz
 
 plt.rcParams.update({'font.size': 8, 'axes.titlesize': 8.5, 'axes.labelsize': 8, 'legend.fontsize': 7, 'xtick.labelsize': 7,
@@ -23,17 +23,6 @@ def save(fig, name): fig.savefig(f'figures/{name}.png', bbox_inches='tight'); pl
 AZ = np.radians(104.0)                                    # cross-section azimuth, normal to the ~N14E strike
 def along(x, y): return x * np.sin(AZ) + y * np.cos(AZ)
 
-# ---------------------------------------------------------- Fig 1 workflow (schematic; to be redrawn in Figma)
-fig, ax = plt.subplots(figsize=(W2, 2.3)); ax.axis('off'); ax.set_xlim(0, 10); ax.set_ylim(0, 3)
-boxes = [(0.1, 'Two public catalogues\nsame stimulation\n(surface network;\nML phase picking)'),
-         (2.1, 'Origin-time\nmatching\n(one-to-one)'), (4.1, 'Location & magnitude\ndiscrepancy of\nthe same events'),
-         (6.1, 'Interpretation in\neach catalogue:\nplanes, clusters,\nstress, overlap'), (8.1, 'Which conclusions\nsurvive the\ncatalogue choice?')]
-for i, (x, t) in enumerate(boxes):
-    ax.add_patch(FancyBboxPatch((x, 0.6), 1.75, 1.8, boxstyle='round,pad=0.03,rounding_size=0.12', fc='#f3f2ef', ec=INK, lw=0.7))
-    ax.text(x + 0.875, 1.5, t, ha='center', va='center', fontsize=7.2)
-    if i < 4: ax.annotate('', (x + 1.97, 1.5), (x + 1.78, 1.5), arrowprops=dict(arrowstyle='-|>', lw=0.8, color=INK))
-save(fig, 'Fig01_workflow')
-
 # ---------------------------------------------------------- Fig 2 overview
 fig, axs = plt.subplots(2, 2, figsize=(W2, 5.6), gridspec_kw=dict(height_ratios=[1.15, 1]))
 for j, (k, C) in enumerate([('N', N), ('Z', Z)]):
@@ -50,7 +39,7 @@ for a in axs[0]: a.set_xlim(-100, 1800); a.set_ylim(-1100, 550)
 for a in axs[1]: a.set_xlim(-300, 2000); a.set_ylim(3300, 1700)
 h = axs[0, 0].legend(title='16A stage', markerscale=3.5, ncol=1, frameon=False, loc='upper left', bbox_to_anchor=(1.0, 1.0))
 for a, t in zip(axs.flat, 'abcd'): tag(a, t)
-fig.tight_layout(); save(fig, 'Fig02_overview')
+fig.tight_layout(); save(fig, 'Fig03_overview')
 
 # ---------------------------------------------------------- Fig 3 matching
 fig, axs = plt.subplots(1, 3, figsize=(W2, 2.2))
@@ -67,7 +56,7 @@ xx = np.linspace(P.MN.min(), P.MN.max(), 10); axs[2].plot(xx, F['mag_tls_a'] + F
 axs[2].plot(xx, xx, ls=':', color=GRAY, lw=1); axs[2].set_xlabel('Magnitude, Niemz'); axs[2].set_ylabel('Magnitude, Zhu')
 axs[2].text(0.04, 0.95, f"M$_Z$ = {F['mag_tls_a']:.2f} + {F['mag_tls_b']:.2f} M$_N$\nr = {F['mag_r']:.2f}", transform=axs[2].transAxes, va='top', fontsize=7)
 for a, t in zip(axs, 'abc'): tag(a, t)
-fig.tight_layout(); save(fig, 'Fig03_matching')
+fig.tight_layout(); save(fig, 'Fig05_matching')
 
 # ---------------------------------------------------------- Fig 4 discrepancy
 fig = plt.figure(figsize=(W2, 4.6)); gs = fig.add_gridspec(2, 3, height_ratios=[1.3, 1])
@@ -92,7 +81,7 @@ a2.plot(x, bs.d3_med, 'o', color=INK, ms=4, label='Median 3-D distance')
 a2.axhline(0, color=INK, lw=0.6); a2.set_xticks(x, SHORT); a2.set_xlabel('16A stage'); a2.set_ylabel('Median discrepancy (m)')
 a2.set_ylim(-250, 360); a2.legend(frameon=False, ncol=4, loc='upper left')
 for a, t in zip([a0, a1, a2], 'abc'): tag(a, t)
-fig.tight_layout(); save(fig, 'Fig04_discrepancy')
+fig.tight_layout(); save(fig, 'Fig06_discrepancy')
 
 # ---------------------------------------------------------- stereonet helpers
 def proj(nx, ny, nz):
@@ -123,7 +112,7 @@ for c, col, d in [('Niemz', CN, -0.15), ('Zhu', CZ, 0.15)]:
 a1.set_ylabel('Planarity 1 − 2λ$_3$/(λ$_1$+λ$_2$)'); a1.set_xticks(x, SHORT, rotation=0); a1.set_ylim(0, 1.03); a1.set_xlabel('16A stage')
 a2.set_ylabel('Thickness √λ$_3$ (m)'); a2.set_xticks(x, SHORT); a2.set_xlabel('16A stage'); a1.legend(frameon=False, loc='lower left')
 for a, t in zip([a0, a1, a2], 'abc'): tag(a, t)
-fig.tight_layout(); save(fig, 'Fig05_stage_planes')
+fig.tight_layout(); save(fig, 'Fig07_stage_planes')
 
 # ---------------------------------------------------------- Fig 6 cross-sections of the same events
 show = ['16A-3R', '16A-6B', '16A-8']
@@ -141,7 +130,7 @@ for j, s in enumerate(show):
         axs[i, j].set_xlabel('Horizontal, normal to strike (m)' if i == 1 else '')
         if j == 0: axs[i, j].set_ylabel(f'{"Niemz" if k=="N" else "Zhu"}\nRelative depth (m)')
 for a, t in zip(axs.flat, 'abcdef'): tag(a, t, -0.3)
-fig.tight_layout(); save(fig, 'Fig06_cross_sections')
+fig.tight_layout(); save(fig, 'Fig08_cross_sections')
 
 # ---------------------------------------------------------- Fig 7 clustering
 labN, labZ = np.load('results/labels_hdb_N.npy'), np.load('results/labels_hdb_Z.npy')
@@ -169,7 +158,7 @@ for ms, mk in [(3, 'o'), (5, 's'), (10, '^')]:
     h = Hs[Hs.ms == ms]; a.plot(h.mcs, h.ARI_cl, '-' + mk, color=INK, ms=4, lw=1, label=f'HDBSCAN, min_samples={ms}')
 a.axhspan(B.ARI.min(), B.ARI.max(), color=GRAY, alpha=0.6, lw=0, label='Gaussian mixture, 10 seeds')
 a.set_xlabel('HDBSCAN min_cluster_size'); a.set_ylabel('Niemz–Zhu ARI'); a.set_ylim(0, 1); a.legend(frameon=False, fontsize=6.3); tag(a, 'd')
-fig.tight_layout(); save(fig, 'Fig07_clusters')
+fig.tight_layout(); save(fig, 'Fig09_clusters')
 
 # ---------------------------------------------------------- Fig 8 stress
 St = pd.read_csv('results/stress_tendencies.csv')
@@ -198,7 +187,7 @@ for c, col, d in [('N', CN, -0.15), ('Z', CZ, 0.15)]:
 a1.axhline(F['dPc_opt'], color=INK, ls=':', lw=1); a1.text(8.4, F['dPc_opt'] - 0.4, 'optimally\noriented', fontsize=6, va='top', ha='right')
 a1.set_xticks(x, SHORT); a1.set_xlabel('16A stage'); a1.set_ylabel('Pore-pressure increase for slip, ΔP$_c$ (MPa)')
 a1.legend(frameon=False); tag(a1, 'b')
-fig.tight_layout(); save(fig, 'Fig08_stress')
+fig.tight_layout(); save(fig, 'Fig10_stress')
 
 # ---------------------------------------------------------- Fig 9 overlap
 O = pd.read_csv('results/stage_overlap.csv')
@@ -211,7 +200,7 @@ for a, d in zip(axs, [25, 50]):
     a.set_ylabel(f'Fraction within {d} m of\nan earlier stage\'s event')
 axs[0].legend(frameon=False, ncol=2, loc='upper right')
 for a, t in zip(axs, 'ab'): tag(a, t)
-fig.tight_layout(); save(fig, 'Fig09_overlap')
+fig.tight_layout(); save(fig, 'Fig11_overlap')
 
 # ---------------------------------------------------------- Fig S1 tolerance & magnitude independence
 fig, axs = plt.subplots(1, 2, figsize=(W2 * 0.8, 2.2))
