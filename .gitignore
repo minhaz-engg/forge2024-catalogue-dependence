@@ -1,0 +1,7 @@
+data/raw/
+data/catalog_*.csv
+results/
+figures/
+__pycache__/
+.venv/
+.DS_Store
